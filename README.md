@@ -90,27 +90,6 @@ Use following command to generate all three components or use appropriate flag :
 g -n User --all
 ```
 
-### (Optional) Create a Wrapper Script
-
-If you want an even simpler execution, create a script named g:
-
-Paste this inside the file:
-
-```bash
-java -jar ~/tools/spring-shell-generator-0.1.jar "$@"
-```
-
-Save it in /usr/local/bin/g and make it executable:
-
-```bash
-chmod +x /usr/local/bin/g
-```
-
-Now you can run commands directly:
-
-```bash
-g -n User -c -s -r
-```
 
 📢 Contributing
 
