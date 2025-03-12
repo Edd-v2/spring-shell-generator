@@ -1,0 +1,19 @@
+package {{package}};
+
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class {{className}}Service {
+
+    // you should place the service constructor here and inject via constructor
+
+
+    public List<String> getAll() {
+        return List.of("Example item 1", "Example item 2");
+    }
+
+    public String save(String payload) {
+        return "Saved: " + payload;
+    }
+}

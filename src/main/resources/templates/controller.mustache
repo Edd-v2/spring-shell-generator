@@ -1,0 +1,23 @@
+package {{package}};
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/{{basePath}}")
+public class {{className}}Controller {
+
+    // you should place the controller constructor here and inject via constructor
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<String>> getAll() {
+        return ResponseEntity.ok(List.of("Example item 1", "Example item 2"));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> create(@RequestBody String payload) {
+        return ResponseEntity.ok("Created: " + payload);
+    }
+}
