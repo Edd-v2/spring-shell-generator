@@ -7,19 +7,17 @@ import com.shell.Shell.mustache.TemplateRenderer;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-
 @Component
-@ComponentInfo(type = ComponentType.SERVICE)
-public class ServiceGenerator extends AbstractComponentGenerator {
+@ComponentInfo(type = ComponentType.WEBSOCKET)
+public class WebSocketHandler  extends AbstractComponentGenerator {
 
     @Override
     public String generateContent(String packageName, String className) {
-        return TemplateRenderer.render("service.mustache", Map.of(
+        return TemplateRenderer.render("websocket-handler.mustache", Map.of(
                 "package", packageName,
                 "className", className,
                 "basePath", className.toLowerCase()
         ));
     }
-
 
 }

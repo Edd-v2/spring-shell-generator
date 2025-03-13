@@ -1,0 +1,47 @@
+package {{package}};
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * WebSocket Configuration Class
+ */
+@Configuration
+@EnableWebSocket
+@Component
+public class {{className}}WebSocketConfig implements WebSocketConfigurer {
+
+    @Value("${socket.path}")
+    private String socketPath;
+
+    /**
+     * Create a new Map<String, WebSocketSession> to store active sessions
+     */
+    private final Map<String, WebSocketSession> sessions = new HashMap<>();
+
+    /**
+     * Provides a bean for storing WebSocket sessions
+     * @return Map of active WebSocket sessions
+     */
+    @Bean("sessions")
+    public Map<String, WebSocketSession> getSessions() {
+        return sessions;
+    }
+
+    /**
+     * Registers WebSocket handlers
+     */
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(new {{className}}WebSocketHandler(sessions), socketPath);
+    }
+}

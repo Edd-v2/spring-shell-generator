@@ -1,0 +1,76 @@
+package {{package}};
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+
+import javax.net.ssl.*;
+import java.security.cert.X509Certificate;
+
+import static org.springframework.http.HttpMethod.POST;
+
+@Configuration
+@EnableWebSecurity
+public class {{className}}SecurityConfiguration {
+
+    //PROPERTIES
+    @Value("${wso2.introspection-uri}")
+    private String introspectionUri;
+    @Value("${wso2.client.id}")
+    private String clientId;
+    @Value("${wso2.client.secret}")
+    private String clientSecret;
+
+    private final String[] AUTH_WHITE_LIST = {
+            "/v0/api-docs/**", "/v1/api-docs/**", "/v2/api-docs/**", "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/greeting/**",
+            "/swagger-resources/**"
+    };
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        disableSSLVerification();
+
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers(POST, "/notifications/**").permitAll()
+                                .requestMatchers(AUTH_WHITE_LIST).permitAll()
+                                .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .opaqueToken(opaqueToken -> opaqueToken.introspectionUri(introspectionUri)
+                                .introspectionClientCredentials(clientId, clientSecret)
+                        )
+                );
+
+        return http.build();
+    }
+
+    private void disableSSLVerification() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+                    }
+            };
+
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            HostnameVerifier allHostsValid = (hostname, session) -> true;
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

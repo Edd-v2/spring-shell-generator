@@ -3,7 +3,10 @@ package com.shell.Shell.factory.types;
 public enum ComponentType {
     CONTROLLER("Controller"),
     SERVICE("Service"),
-    REPOSITORY("Repository");
+    REPOSITORY("Repository"),
+    SECURITY("Security"),
+    WEBCONFIG("Webconfig"),
+    WEBSOCKET("Websocket");
 
     private final String value;
 

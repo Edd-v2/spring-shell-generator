@@ -1,17 +1,31 @@
 package com.shell.Shell.factory;
 
-import com.shell.Shell.factory.generator.ControllerGenerator;
-import com.shell.Shell.factory.generator.RepositoryGenerator;
-import com.shell.Shell.factory.generator.ServiceGenerator;
+import com.shell.Shell.factory.annotations.ComponentInfo;
 import com.shell.Shell.factory.interfaces.ComponentGenerator;
 import com.shell.Shell.factory.types.ComponentType;
+import org.springframework.context.ApplicationContext;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class ComponentGeneratorFactory {
-    public static ComponentGenerator getGenerator(ComponentType type) {
-        return switch (type) {
-            case CONTROLLER -> new ControllerGenerator();
-            case SERVICE -> new ServiceGenerator();
-            case REPOSITORY -> new RepositoryGenerator();
-        };
+
+    private final Map<ComponentType, ComponentGenerator> generators = new HashMap<>();
+
+    public ComponentGeneratorFactory(ApplicationContext context) {
+        Map<String, ComponentGenerator> beans = context.getBeansOfType(ComponentGenerator.class);
+
+        for (ComponentGenerator generator : beans.values()) {
+            ComponentInfo annotation = generator.getClass().getAnnotation(ComponentInfo.class);
+            if (annotation != null) {
+                generators.put(annotation.type(), generator);
+            }
+        }
+    }
+
+
+    public ComponentGenerator getGenerator(ComponentType type) {
+        return generators.get(type);
     }
 }

@@ -1,0 +1,59 @@
+package {{package}};
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+
+import java.io.IOException;
+import java.util.Map;
+
+import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
+
+@RequiredArgsConstructor
+@Component
+@Slf4j
+public class {{className}}WebSocketHandler extends AbstractWebSocketHandler {
+
+    private final Map<String, WebSocketSession> sessions;
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws IOException {
+        BearerTokenAuthentication bearerAuth = (BearerTokenAuthentication) session.getPrincipal();
+        String principalName = null;
+
+        if (bearerAuth != null) {
+            principalName = (String) bearerAuth.getTokenAttributes().get("client_id");
+        }
+
+        if (principalName == null) {
+            session.close(SERVER_ERROR.withReason("User must be authenticated"));
+            return;
+        }
+
+        sessions.putIfAbsent(principalName, session);
+        session.sendMessage(new TextMessage("Connection established => " + principalName));
+
+        log.info("User '{}' connected via WebSocket.", principalName);
+    }
+
+    @Override
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
+        BearerTokenAuthentication bearerAuth = (BearerTokenAuthentication) session.getPrincipal();
+        String principalName = null;
+
+        if (bearerAuth != null) {
+            principalName = (String) bearerAuth.getTokenAttributes().get("client_id");
+        }
+
+        if (principalName != null) {
+            sessions.remove(principalName);
+            log.info("User '{}' disconnected from WebSocket.", principalName);
+        }
+    }
+}

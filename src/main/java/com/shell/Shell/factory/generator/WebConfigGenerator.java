@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
-@ComponentInfo(type = ComponentType.SERVICE)
-public class ServiceGenerator extends AbstractComponentGenerator {
 
+
+
+@Component
+@ComponentInfo(type = ComponentType.WEBCONFIG)
+public class WebConfigGenerator extends AbstractComponentGenerator {
     @Override
     public String generateContent(String packageName, String className) {
         return TemplateRenderer.render("service.mustache", Map.of(
