@@ -23,10 +23,10 @@ public abstract class AbstractComponentGenerator implements ComponentGenerator {
             String content = generateContent(basePackage + "." + getFolderName(), className);
             Files.writeString(filePath, content);
 
-            result.append("[✔] Successfully generated : ").append(getComponentType().name()).append(" ").append(filePath).append("\n");
+            result.append("[v] Successfully generated : ").append(getComponentType().name()).append(" ").append(filePath).append("\n");
 
         } catch (Exception ex) {
-            result.append("[❌] Error occurred ").append(getClassSuffix()).append(": ").append(ex.getMessage()).append("\n");
+            result.append("[x] Error occurred ").append(getClassSuffix()).append(": ").append(ex.getMessage()).append("\n");
         }
     }
 

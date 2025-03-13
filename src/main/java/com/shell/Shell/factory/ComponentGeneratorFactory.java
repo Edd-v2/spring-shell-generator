@@ -4,11 +4,12 @@ import com.shell.Shell.factory.annotations.ComponentInfo;
 import com.shell.Shell.factory.interfaces.ComponentGenerator;
 import com.shell.Shell.factory.types.ComponentType;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class ComponentGeneratorFactory {
 
     private final Map<ComponentType, ComponentGenerator> generators = new HashMap<>();

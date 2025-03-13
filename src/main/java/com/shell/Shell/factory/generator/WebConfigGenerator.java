@@ -16,7 +16,7 @@ import java.util.Map;
 public class WebConfigGenerator extends AbstractComponentGenerator {
     @Override
     public String generateContent(String packageName, String className) {
-        return TemplateRenderer.render("service.mustache", Map.of(
+        return TemplateRenderer.render("webconfig.mustache", Map.of(
                 "package", packageName,
                 "className", className,
                 "basePath", className.toLowerCase()
